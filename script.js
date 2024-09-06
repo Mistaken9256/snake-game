@@ -10,10 +10,14 @@ let snake = [{ x: 10 * box, y: 10 * box }];
 let direction = "RIGHT";
 let apple = { x: Math.floor(Math.random() * canvas.width / box) * box, y: Math.floor(Math.random() * canvas.height / box) * box };
 let powerUp = { x: Math.floor(Math.random() * canvas.width / box) * box, y: Math.floor(Math.random() * canvas.height / box) * box };
+let gunPowerUp = { x: Math.floor(Math.random() * canvas.width / box) * box, y: Math.floor(Math.random() * canvas.height / box) * box };
 let score = 0;
 let highScore = localStorage.getItem('highScore') || 0; // Retrieve high score from localStorage
 let gamePaused = false;
 let gameInterval;
+let projectiles = [];
+let projectileSpeed = 2; // Speed of the projectile
+let hasGun = false; // If the snake has the gun power-up
 
 // Color settings (initially green)
 let snakeColor = `rgb(0, 255, 0)`;
@@ -47,6 +51,20 @@ function updateSnakeColor() {
     snakeColor = `rgb(${red}, ${green}, ${blue})`;
 }
 
+// Handle mouse clicks for shooting
+document.addEventListener('mousedown', () => {
+    if (hasGun) {
+        const projectile = {
+            x: snake[0].x,
+            y: snake[0].y,
+            dx: direction === "RIGHT" ? box : direction === "LEFT" ? -box : 0,
+            dy: direction === "DOWN" ? box : direction === "UP" ? -box : 0
+        };
+        projectiles.push(projectile);
+        hasGun = false; // Deactivate gun after one use
+    }
+});
+
 // Main update function
 function update() {
     if (gamePaused) return;
@@ -55,8 +73,11 @@ function update() {
     drawSnake();
     drawApple();
     drawPowerUp();
+    drawGunPowerUp();
+    updateProjectiles();
     checkAppleCollision();
     checkPowerUpCollision();
+    checkGunPowerUpCollision();
     checkCollision();
     drawScore();
 }
@@ -81,6 +102,11 @@ function drawApple() {
 function drawPowerUp() {
     ctx.fillStyle = "yellow";
     ctx.fillRect(powerUp.x, powerUp.y, box, box);
+}
+
+function drawGunPowerUp() {
+    ctx.fillStyle = "blue";
+    ctx.fillRect(gunPowerUp.x, gunPowerUp.y, box, box);
 }
 
 function moveSnake() {
@@ -110,6 +136,34 @@ function checkPowerUpCollision() {
     if (snake[0].x === powerUp.x && snake[0].y === powerUp.y) {
         speedBoost();
         powerUp = { x: Math.floor(Math.random() * canvas.width / box) * box, y: Math.floor(Math.random() * canvas.height / box) * box };
+    }
+}
+
+// Check for collision with the gun power-up
+function checkGunPowerUpCollision() {
+    if (snake[0].x === gunPowerUp.x && snake[0].y === gunPowerUp.y) {
+        hasGun = true;
+        gunPowerUp = { x: Math.floor(Math.random() * canvas.width / box) * box, y: Math.floor(Math.random() * canvas.height / box) * box };
+    }
+}
+
+// Update projectiles
+function updateProjectiles() {
+    for (let i = projectiles.length - 1; i >= 0; i--) {
+        const projectile = projectiles[i];
+        projectile.x += projectile.dx;
+        projectile.y += projectile.dy;
+
+        // Remove projectile if out of bounds
+        if (projectile.x < 0 || projectile.x >= canvas.width || projectile.y < 0 || projectile.y >= canvas.height) {
+            projectiles.splice(i, 1);
+        }
+
+        // Check if projectile hits the apple
+        if (projectile.x === apple.x && projectile.y === apple.y) {
+            apple = { x: Math.floor(Math.random() * canvas.width / box) * box, y: Math.floor(Math.random() * canvas.height / box) * box };
+            projectiles.splice(i, 1); // Remove projectile after hitting the apple
+        }
     }
 }
 
