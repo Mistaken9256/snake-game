@@ -4,10 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake Game</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Controls for Pause and Restart -->
+    <div class="controls">
+        <button id="pause">Pause</button>
+        <button id="restart">Restart</button>
+
+        <!-- RGB Color Selector -->
+        <div>
+            <label for="colorSelector">Snake Color (RGB): </label>
+            <input type="range" id="red" min="0" max="255" value="0">
+            <input type="range" id="green" min="0" max="255" value="255">
+            <input type="range" id="blue" min="0" max="255" value="0">
+        </div>
+    </div>
+
+    <!-- Game Legend -->
+    <div id="legend">
+        <h3>Game Legend:</h3>
+        <p>Use <strong>WASD</strong> or <strong>Arrow keys</strong> to move the snake.</p>
+        <p>Red block: <strong>Apple</strong> - Eat to grow!</p>
+        <p>Yellow block: <strong>Power-up</strong> - Speed boost for 5 seconds.</p>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
