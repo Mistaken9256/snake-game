@@ -17,6 +17,15 @@ canvas {
 .controls {
     margin-top: 20px;
 }
+/* Add these styles to your existing style.css */
+.projectile {
+    position: absolute;
+    width: 10px; /* Adjust as needed */
+    height: 10px; /* Adjust as needed */
+    background-color: gray; /* Color for the projectile */
+    border-radius: 50%; /* Make it round */
+}
+
 
 #red, #green, #blue {
     display: block;
